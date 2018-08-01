@@ -8,6 +8,9 @@ public class WanderingAI : MonoBehaviour {
 
 	public bool Alive { get; set; }
 
+	[SerializeField] private GameObject fireballPrefab;
+	private GameObject _fireball;
+
 	void Start () {
 		this.Alive = true;
 	}
@@ -21,7 +24,15 @@ public class WanderingAI : MonoBehaviour {
 		Ray ray = new Ray(transform.position, transform.forward);
 		RaycastHit hit;
 		if (Physics.SphereCast(ray, 0.75f, out hit)) {
-			if (hit.distance < obstacleRange) {
+			GameObject hitObject = hit.transform.gameObject;
+			if (hitObject.GetComponent<PlayerCharacter>()) {
+				if (_fireball == null) {
+					_fireball = Instantiate(fireballPrefab) as GameObject;
+					_fireball.transform.position = transform.TransformPoint(Vector3.forward * 1.5f);
+					_fireball.transform.rotation = transform.rotation;
+				}	
+			}
+			else if (hit.distance < obstacleRange) {
 				float angle = Random.Range(-110, 110);
 				transform.Rotate(0, angle, 0);
 			}
